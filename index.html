@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Print | Simplified</title>
+    <style>
+        /* --- CORE THEME --- */
+        :root {
+            --primary: #00F3FF;
+            --bg: #0a0a0a;
+            --panel: #111;
+            --text: #fff;
+            --border: #333;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        /* --- BACKGROUND --- */
+        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(0,0,0,0.9);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+        .brand { font-weight: bold; font-size: 1.2rem; color: var(--primary); letter-spacing: 1px; margin-right: 10px; }
+
+        .nav-btn {
+            background: none; border: none; color: #888;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            padding: 10px 5px;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover { color: #ccc; }
+        .nav-btn:active { transform: scale(0.95); }
+        .nav-btn.active { color: white; border-bottom: 2px solid var(--primary); }
+
+        /* 50% Bigger Cart Icon */
+        .cart-icon-wrapper {
+            position: relative;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s ease;
+        }
+        .cart-icon-wrapper:active { transform: scale(0.9); }
+        .cart-svg {
+            width: 36px;
+            height: 36px;
+            fill: var(--primary);
+        }
+        .badge {
+            position: absolute; top: 0; right: -5px;
+            background: red; color: white;
+            font-size: 0.8rem; font-weight: bold;
+            padding: 2px 6px; border-radius: 10px;
+        }
+
+        /* --- LAYOUT --- */
+        .page { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- GRID (Mobile Friendly) --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            padding-bottom: 80px;
+        }
+
+        /* --- CARD --- */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s ease;
+        }
+        .card:hover { border-color: #555; }
+        
+        .card-img-box { width: 100%; aspect-ratio: 1/1; background: #222; overflow: hidden; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .card-info { padding: 12px; flex-grow: 1; }
+        .card-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 5px; display: block; }
+        .card-price { color: var(--primary); font-family: monospace; font-size: 1.1rem; }
+
+        .card-actions { padding: 10px; display: flex; gap: 5px; }
+        
+        /* --- BUTTONS & ANIMATIONS --- */
+        .btn {
+            border: none; border-radius: 6px;
+            padding: 10px; font-weight: bold; cursor: pointer;
+            width: 100%; font-size: 0.9rem;
+            transition: transform 0.1s ease, filter 0.2s ease;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn:hover { filter: brightness(1.2); }
+        
+        .btn-add { background: #333; color: white; }
+        .btn-buy { background: var(--primary); color: black; }
+        
+        .remove-btn {
+            background: #ff4444; color: white;
+            border: none; border-radius: 4px;
+            padding: 6px 12px; font-size: 0.8rem; font-weight: bold;
+            cursor: pointer; transition: transform 0.1s ease, background 0.2s ease;
+        }
+        .remove-btn:active { transform: scale(0.9); }
+        .remove-btn:hover { background: #ff2222; }
+
+        /* --- CHECKOUT / MODAL --- */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 2000;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: #151515; border: 1px solid var(--border);
+            width: 90%; max-width: 400px;
+            border-radius: 15px; padding: 25px;
+            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #888; cursor: pointer; transition: color 0.2s ease;}
+        .close:hover { color: white; }
+
+        .input-group { margin-bottom: 15px; }
+        .input-label { display: block; color: #888; margin-bottom: 5px; font-size: 0.9rem; }
+        .full-input {
+            width: 100%; padding: 12px;
+            background: #222; border: 1px solid #444;
+            color: white; border-radius: 8px;
+            box-sizing: border-box; font-size: 1rem;
+        }
+
+        .pay-btn {
+            display: block; width: 100%; margin: 10px 0; padding: 15px;
+            border-radius: 8px; text-align: center; font-weight: bold; cursor: pointer;
+            font-size: 1.1rem; transition: transform 0.1s ease, filter 0.2s ease;
+        }
+        .pay-btn:active { transform: scale(0.97); }
+        .pay-btn:hover { filter: brightness(1.1); }
+        .venmo { background: #008CFF; color: white; }
+        .paypal { background: #FFC439; color: black; }
+
+        /* --- SETTINGS & HELP PAGES --- */
+        .list-row {
+            padding: 20px; border-bottom: 1px solid #333;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .panel-box {
+            background: var(--panel); border-radius: 10px; border: 1px solid var(--border); overflow: hidden;
+        }
+
+        /* --- MOBILE TWEAKS --- */
+        @media (max-width: 600px) {
+            nav { padding: 10px 15px; }
+            .brand { font-size: 1rem; margin-right: 5px; }
+            .nav-btn { font-size: 0.8rem; padding: 10px 3px; }
+            .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .card-title { font-size: 0.85rem; }
+            .card-price { font-size: 1rem; }
+            .btn { font-size: 0.8rem; padding: 8px; }
+            .card-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <nav>
+        <div class="nav-left">
+            <div class="brand">THE PRINT</div>
+            <button class="nav-btn active" id="btn-prints" onclick="showPage('prints')">PRINTS</button>
+            <button class="nav-btn" id="btn-help" onclick="showPage('help')">HELP</button>
+            <button class="nav-btn" id="btn-settings" onclick="showPage('settings')">SETTINGS</button>
+        </div>
+        
+        <div class="cart-icon-wrapper" onclick="openCart()">
+            <svg class="cart-svg" viewBox="0 0 24 24">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <span class="badge" id="cart-count">0</span>
+        </div>
+    </nav>
+
+    <div id="prints" class="page active">
+        <h2 style="margin-top:0; color:var(--primary);">Seasonal Collection</h2>
+        <div class="grid" id="product-grid"></div>
+    </div>
+
+    <div id="help" class="page">
+        <h2 style="margin-top:0; color:var(--primary);">Need Help?</h2>
+        <div class="panel-box" style="padding: 20px;">
+            <h3 style="margin-top:0;">Contact Support</h3>
+            <p style="color:#aaa; line-height:1.5;">Having issues with an order, or looking for a custom print? Shoot me an email directly and I'll get back to you as soon as possible.</p>
+            <button class="btn btn-buy" style="margin-top: 15px; padding: 15px; font-size: 1.1rem;" onclick="window.location.href='mailto:your.email@example.com?subject=Print Shop Inquiry'">Email Me Now</button>
+        </div>
+    </div>
+
+    <div id="settings" class="page">
+        <h2 style="margin-top:0; color:var(--primary);">Settings</h2>
+        <div class="panel-box">
+            <div class="list-row">
+                <span>Admin Access</span>
+                <input type="password" id="admin-pass" placeholder="Password" style="background:#222; border:1px solid #444; color:white; padding:5px; border-radius:4px;">
+            </div>
+            <div class="list-row" onclick="clearData()" style="cursor:pointer; color:#ff4444; transition: background 0.2s;" onmouseover="this.style.background='#220000'" onmouseout="this.style.background='transparent'">
+                Reset / Clear Local Data
+            </div>
+            <div class="list-row">
+                <small style="color:#666">Version 3.0 (Animated & Cleaned)</small>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="modal">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal()">&times;</span>
+            
+            <div id="view-cart">
+                <h3 style="margin-top:0;">Your Cart</h3>
+                <div id="cart-items" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px; border-bottom: 1px solid #333;"></div>
+                <div style="text-align: right; font-size: 1.2rem; margin-bottom: 20px; color:var(--primary);">
+                    Total: <span id="cart-total">$0.00</span>
+                </div>
+                <button class="btn btn-buy" style="font-size:1.1rem; padding:15px;" onclick="goToCheckout()">Proceed to Checkout</button>
+                <button class="btn btn-add" style="margin-top:10px;" onclick="closeModal()">Keep Shopping</button>
+            </div>
+
+            <div id="view-checkout" style="display:none;">
+                <h3 style="margin-top:0;">Your Info</h3>
+                
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex:1;">
+                        <label class="input-label">First Name</label>
+                        <input type="text" id="fName" class="full-input" placeholder="John">
+                    </div>
+                    <div class="input-group" style="flex:1;">
+                        <label class="input-label">Last Name</label>
+                        <input type="text" id="lName" class="full-input" placeholder="Doe">
+                    </div>
+                </div>
+
+                <h3>Payment Method</h3>
+                <div class="pay-btn venmo" onclick="processPayment('Venmo')">Venmo</div>
+                <div class="pay-btn paypal" onclick="processPayment('PayPal')">PayPal</div>
+                <button class="btn btn-add" style="margin-top:10px; background:transparent; border:1px solid #444;" onclick="backToCart()">Back to Cart</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* --- 1. DATA (Placeholder Generator) --- */
+        const products = Array.from({length: 10}, (_, i) => ({
+            id: i + 1,
+            name: `Placeholder Print ${i + 1}`,
+            price: 5.00 + (i * 2),
+            // Generic placeholder images
+            img: `https://placehold.co/400x400/222/FFF?text=Print+${i + 1}`
+        }));
+
+        let cart = [];
+
+        /* --- 2. INIT & RENDER --- */
+        window.onload = function() {
+            renderGrid();
+            draw(); // Start BG animation
+            const saved = localStorage.getItem('simpleCart');
+            if(saved) { cart = JSON.parse(saved); updateBadge(); }
+            
+            // Password Listener for Admin
+            document.getElementById('admin-pass').addEventListener('keydown', (e) => {
+                if(e.key === 'Enter' && e.target.value === 'PASSWORD') {
+                    alert('Admin Unlocked (Placeholder)');
+                    e.target.value = '';
+                }
+            });
+        };
+
+        function renderGrid() {
+            const grid = document.getElementById('product-grid');
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-img-box"><img src="${p.img}" class="card-img" alt="${p.name}"></div>
+                    <div class="card-info">
+                        <span class="card-title">${p.name}</span>
+                        <span class="card-price">$${p.price.toFixed(2)}</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-add" onclick="addToCart(${p.id})">Add</button>
+                        <button class="btn btn-buy" onclick="buyNow(${p.id})">Buy Now</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /* --- 3. CART LOGIC --- */
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            cart.push(item);
+            updateBadge();
+        }
+
+        function buyNow(id) {
+            addToCart(id);
+            openCart();
+            goToCheckout();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateBadge();
+            renderCartItems();
+            
+            // If cart becomes empty, close modal automatically
+            if(cart.length === 0) {
+                closeModal();
+            }
+        }
+
+        function updateBadge() {
+            document.getElementById('cart-count').innerText = cart.length;
+            localStorage.setItem('simpleCart', JSON.stringify(cart));
+        }
+
+        /* --- 4. NAVIGATION & MODALS --- */
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('btn-'+id).classList.add('active');
+        }
+
+        function openCart() {
+            if(cart.length === 0) { alert("Your cart is currently empty."); return; }
+            document.getElementById('checkoutModal').style.display = 'flex';
+            document.getElementById('view-cart').style.display = 'block';
+            document.getElementById('view-checkout').style.display = 'none';
+            renderCartItems();
+        }
+
+        function closeModal() {
+            document.getElementById('checkoutModal').style.display = 'none';
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, i) => {
+                total += item.price;
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                div.style.padding = '12px 0';
+                div.style.borderBottom = '1px solid #222';
+                
+                // Explicit "Remove" button here
+                div.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <span style="font-weight:bold;">${item.name}</span>
+                        <span style="font-family:monospace; color:var(--primary);">$${item.price.toFixed(2)}</span>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromCart(${i})">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('cart-total').innerText = '$' + total.toFixed(2);
+        }
+
+        function goToCheckout() {
+            document.getElementById('view-cart').style.display = 'none';
+            document.getElementById('view-checkout').style.display = 'block';
+        }
+
+        function backToCart() {
+            document.getElementById('view-cart').style.display = 'block';
+            document.getElementById('view-checkout').style.display = 'none';
+        }
+
+        /* --- 5. CHECKOUT & EMAIL --- */
+        function processPayment(method) {
+            const fName = document.getElementById('fName').value.trim();
+            const lName = document.getElementById('lName').value.trim();
+
+            if(!fName || !lName) { alert("Please enter your First and Last Name."); return; }
+
+            // 1. Open Payment Link
+            let link = (method === 'Venmo') 
+                ? "https://venmo.com/code?user_id=4239203621668282296" 
+                : "https://paypal.me/theprintco";
+            window.open(link, '_blank');
+
+            // 2. Draft Email
+            const total = cart.reduce((sum, item) => sum + item.price, 0).toFixed(2);
+            let itemList = cart.map((item, i) => `${i+1}. ${item.name} - $${item.price.toFixed(2)}`).join('\n');
+
+            let emailBody = `NEW ORDER\n\nCUSTOMER: ${fName} ${lName}\n\nITEMS:\n${itemList}\n\nTOTAL: $${total}\n\nPayment Method: ${method}`;
+            
+            // Mailto (Make sure to update the email address here too!)
+            setTimeout(() => {
+                window.open(`mailto:your.email@example.com?subject=Order from ${fName} ${lName}&body=${encodeURIComponent(emailBody)}`);
+                
+                // Clear and Close
+                cart = [];
+                updateBadge();
+                closeModal();
+            }, 1000);
+        }
+
+        function clearData() {
+            if(confirm('Are you sure you want to clear all local data? This will empty your cart.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        /* --- BACKGROUND (Simple) --- */
+        const cvs = document.getElementById('bgCanvas'), ctx = cvs.getContext('2d');
+        let w, h, pts = [];
+        window.onresize = () => { w=cvs.width=window.innerWidth; h=cvs.height=window.innerHeight; };
+        window.onresize();
+        for(let i=0;i<30;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5),vy:(Math.random()-.5)});
+        function draw(){
+            ctx.clearRect(0,0,w,h);
+            ctx.fillStyle='#00F3FF';
+            pts.forEach(p=>{
+                p.x+=p.vx; p.y+=p.vy; 
+                if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x,p.y,1.5,0,7); ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+    </script>
+</body>
+</html>
