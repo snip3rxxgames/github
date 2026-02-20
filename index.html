@@ -3,124 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Print</title>
+    <title>The Print | Premium Gallery</title>
     <style>
         :root {
             --primary: #00F3FF;
-            --bg: #0a0a0a;
-            --panel: #111;
-            --text: #fff;
-            --border: #333;
+            --primary-glow: rgba(0, 243, 255, 0.4);
+            --bg: #050505;
+            --panel: rgba(20, 20, 20, 0.8);
+            --card-bg: rgba(30, 30, 30, 0.6);
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent-gradient: linear-gradient(135deg, #00F3FF 0%, #0077FF 100%);
         }
+
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
         body {
             margin: 0;
             background-color: var(--bg);
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            overflow-x: hidden;
         }
 
-        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; pointer-events: none; }
 
-        /* --- NAVIGATION --- */
+        /* --- MODERN NAVIGATION --- */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 20px;
-            background: rgba(0,0,0,0.95);
+            padding: 15px 5%;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        .brand { font-weight: 800; font-size: 1rem; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; }
+        .brand { 
+            font-weight: 900; 
+            font-size: 1.3rem; 
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links { display: flex; gap: 5px; }
 
         .nav-btn {
-            background: none; border: none; color: #777;
-            font-size: 0.75rem; font-weight: 700; cursor: pointer;
-            padding: 10px 5px;
+            background: none; border: none; color: var(--text-dim);
+            font-size: 0.8rem; font-weight: 700; cursor: pointer;
+            padding: 10px 15px; transition: all 0.3s ease;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
         }
-        .nav-btn.active { color: white; border-bottom: 2px solid var(--primary); }
 
-        .cart-wrap { position: relative; cursor: pointer; }
-        .cart-svg { width: 30px; height: 30px; fill: var(--primary); }
+        .nav-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-btn.active { color: var(--primary); background: rgba(0, 243, 255, 0.1); }
+
+        .cart-wrap { 
+            position: relative; cursor: pointer; 
+            padding: 8px; border-radius: 50%;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .cart-wrap:hover { transform: scale(1.1); background: rgba(255,255,255,0.05); }
+        .cart-svg { width: 28px; height: 28px; fill: var(--primary); filter: drop-shadow(0 0 5px var(--primary-glow)); }
+        
         .badge {
-            position: absolute; top: -5px; right: -5px;
-            background: #ff3b3b; color: white;
-            font-size: 0.7rem; padding: 2px 5px; border-radius: 10px;
+            position: absolute; top: -2px; right: -2px;
+            background: var(--accent-gradient); color: black;
+            font-size: 0.7rem; font-weight: 900;
+            min-width: 18px; height: 18px; 
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; border: 2px solid var(--bg);
         }
 
-        /* --- PAGES --- */
-        .page { display: none; padding: 20px; max-width: 900px; margin: 0 auto; animation: slideUp 0.3s ease; }
+        /* --- PRODUCT GRID --- */
+        .page { display: none; padding: 40px 5%; max-width: 1300px; margin: 0 auto; animation: pageIn 0.5s ease forwards; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pageIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- GRID --- */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            padding-bottom: 50px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
         }
 
-        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-        .card-img { width: 100%; aspect-ratio: 1/1; background: #222; object-fit: cover; }
-        .card-info { padding: 12px; }
-        .card-price { color: var(--primary); font-weight: bold; }
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 24px; 
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-glow);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .card-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #111; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .card:hover .card-img { transform: scale(1.08); }
+
+        .card-info { padding: 20px; }
+        .card-title { font-size: 1.1rem; font-weight: 600; color: #eee; margin-bottom: 4px; display: block; }
+        .card-price { color: var(--primary); font-size: 1.25rem; font-weight: 800; display: block; margin-bottom: 15px; }
 
         /* --- BUTTONS --- */
-        .btn { border: none; border-radius: 6px; padding: 8px; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
-        .btn-add { background: #2a2a2a; color: white; width: 100%; margin-bottom: 5px; }
-        .btn-buy { background: var(--primary); color: black; width: 100%; }
-        .btn-paid { background: #008CFF; color: white; font-size: 1.1rem; padding: 15px; }
+        .btn { 
+            border: none; border-radius: 14px; padding: 12px; 
+            font-weight: 700; cursor: pointer; font-size: 0.9rem; 
+            transition: all 0.2s ease; width: 100%;
+        }
+        .btn-add { background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border); margin-bottom: 8px; }
+        .btn-add:hover { background: rgba(255,255,255,0.1); }
+        
+        .btn-buy { background: var(--accent-gradient); color: #000; box-shadow: 0 4px 15px var(--primary-glow); }
+        .btn-buy:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--primary-glow); }
+        .btn:active { transform: scale(0.96); }
 
         /* --- MODAL --- */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 2000;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 2000;
             justify-content: center; align-items: center;
         }
         .modal-content {
-            width: 100%; height: 100%; padding: 20px;
-            display: flex; flex-direction: column; box-sizing: border-box;
-            overflow-y: auto;
+            width: 95%; max-width: 500px; padding: 40px;
+            background: var(--panel); border: 1px solid var(--border);
+            border-radius: 30px; position: relative;
+            text-align: center; max-height: 90vh; overflow-y: auto;
         }
 
-        .massive-total { font-size: 3.5rem; font-weight: 900; color: var(--primary); margin: 10px 0; }
+        .massive-total { font-size: 4.5rem; font-weight: 900; color: var(--primary); margin: 10px 0; letter-spacing: -3px; }
         
         input, select { 
-            width: 100%; padding: 10px; background: #111; border: 1px solid #333; 
-            color: white; border-radius: 8px; font-size: 0.9rem; margin-bottom: 10px;
+            width: 100%; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); 
+            color: white; border-radius: 14px; font-size: 1rem; margin-bottom: 12px;
+            transition: all 0.3s;
         }
+        input:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.1); }
 
-        .pay-opt { padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+        .pay-opt { width: 100%; padding: 20px; border-radius: 16px; font-weight: 800; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
         .venmo { background: #008CFF; color: white; }
         .paypal { background: #FFC439; color: black; }
+        .pay-opt:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
-        /* --- MOBILE SCALING --- */
+        /* --- TOAST NOTIFICATION --- */
+        #toast {
+            position: fixed; bottom: 20px; right: 20px; 
+            background: var(--accent-gradient); color: black;
+            padding: 16px 28px; border-radius: 12px; font-weight: 800;
+            transform: translateY(100px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        #toast.show { transform: translateY(0); }
+
+        /* --- MOBILE --- */
         @media (max-width: 600px) {
-            .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .massive-total { font-size: 5rem; }
-            input, select, .btn, .pay-opt { font-size: 1.1rem; padding: 15px; }
-            .brand { font-size: 1.2rem; }
-            .nav-btn { font-size: 0.85rem; }
+            nav { padding: 10px 15px; }
+            .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .card-info { padding: 12px; }
+            .card-title { font-size: 0.9rem; }
+            .massive-total { font-size: 3rem; }
+            .modal-content { padding: 25px; }
         }
     </style>
 </head>
 <body>
 
 <canvas id="bgCanvas"></canvas>
+<div id="toast">Added to cart!</div>
 
 <nav>
-    <div class="nav-left">
-        <div class="brand">The Print</div>
-        <button class="nav-btn active" id="b-prints" onclick="tab('prints')">PRINTS</button>
-        <button class="nav-btn" id="b-help" onclick="tab('help')">HELP</button>
-        <button class="nav-btn" id="b-sets" onclick="tab('settings')">SETTINGS</button>
+    <div class="brand">The Print</div>
+    <div class="nav-links">
+        <button class="nav-btn active" id="b-prints" onclick="tab('prints')">GALLERY</button>
+        <button class="nav-btn" id="b-help" onclick="tab('help')">SUPPORT</button>
     </div>
     <div class="cart-wrap" onclick="openCart()">
-        <svg class="cart-svg" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 (truncated logic for brevity)"></path></svg>
+        <svg class="cart-svg" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
         <span class="badge" id="count">0</span>
     </div>
 </nav>
@@ -130,71 +198,72 @@
 </div>
 
 <div id="help" class="page">
-    <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #333;">
-        <h3>Pickup: 130 Maple Avenue, Rutland MA</h3>
-        <button class="btn btn-buy" onclick="handleSms()" style="padding:15px; margin-bottom:10px;">Text Me: 774-623-5268</button>
-        <button class="btn btn-add" onclick="handleEmail()" style="padding:15px;">Email: theprintusa@yahoo.com</button>
+    <div style="background:var(--panel); padding:40px; border-radius:30px; border:1px solid var(--border); text-align: center;">
+        <h2 style="color:var(--primary); font-size: 2rem;">Studio Support</h2>
+        <p style="color:var(--text-dim);">130 Maple Avenue, Rutland MA</p>
+        <div style="margin: 30px 0;">
+            <button class="btn btn-buy" onclick="handleSms()" style="max-width:300px; margin-bottom:15px;">Text Support</button>
+            <button class="btn btn-add" onclick="handleEmail()" style="max-width:300px;">Email Inquiry</button>
+        </div>
     </div>
-</div>
-
-<div id="settings" class="page">
-    <button class="btn btn-add" onclick="localStorage.clear(); location.reload();">Clear All Data</button>
 </div>
 
 <div id="m" class="modal">
     <div class="modal-content">
-        <span style="text-align:right; font-size:2rem; cursor:pointer;" onclick="closeM()">&times;</span>
+        <div style="position:absolute; top:20px; right:25px; font-size:2rem; cursor:pointer; color:var(--text-dim);" onclick="closeM()">&times;</div>
         
         <div id="cart-view">
-            <h2>Your Cart</h2>
-            <div id="items-list"></div>
-            <h3 id="review-total"></h3>
-            <button class="btn btn-buy" onclick="goCheck()">Next</button>
+            <h2 style="margin-bottom:20px;">Your Selection</h2>
+            <div id="items-list" style="margin-bottom:30px; text-align: left;"></div>
+            <button class="btn btn-buy" onclick="goCheck()">Proceed to Checkout</button>
         </div>
 
-        <div id="check-view" style="display:none; text-align:center;">
-            <p>TOTAL TO PAY:</p>
+        <div id="check-view" style="display:none;">
+            <span style="color:var(--text-dim); font-size:0.8rem; font-weight:bold; text-transform:uppercase;">Grand Total</span>
             <div id="massive-t" class="massive-total"></div>
-            <p id="shipping-note" style="color:var(--primary); font-size:0.8rem; margin-bottom:10px;"></p>
+            <p id="shipping-note" style="color:var(--primary); font-size:0.9rem; margin-bottom:25px;"></p>
             
             <div id="pay-controls">
                 <input type="text" id="fn" placeholder="First Name">
                 <input type="text" id="ln" placeholder="Last Name">
                 <select id="town" onchange="calcTotal()">
-                    <option value="Rutland">Rutland (Local Pickup)</option>
-                    <option value="Holden">Holden (Local Pickup)</option>
-                    <option value="Paxton">Paxton (Local Pickup)</option>
-                    <option value="Princeton">Princeton (Local Pickup)</option>
-                    <option value="Oakham">Oakham (Local Pickup)</option>
-                    <option value="Barre">Barre (Local Pickup)</option>
-                    <option value="Hubbardston">Hubbardston (Local Pickup)</option>
-                    <option value="Other">Other (Ship to me +$5.00)</option>
+                    <option value="Rutland">Rutland (Free Pickup)</option>
+                    <option value="Holden">Holden (Free Pickup)</option>
+                    <option value="Paxton">Paxton (Free Pickup)</option>
+                    <option value="Other">Other (Shipping +$5.00)</option>
                 </select>
                 <div id="pay-venmo" class="pay-opt venmo" onclick="startPay('Venmo')">Venmo</div>
                 <div id="pay-paypal" class="pay-opt paypal" onclick="startPay('PayPal')">PayPal</div>
             </div>
 
             <div id="after-pay" style="display:none;">
-                <button class="btn btn-paid btn-buy" onclick="showEmailStep()">I've Paid!</button>
+                <h3 style="color:var(--primary)">Payment Initiated</h3>
+                <p>Once you finish the transfer, click below to finalize.</p>
+                <button class="pay-opt" style="background:#00FF88; color:black; border:none;" onclick="showEmailStep()">Confirm Payment</button>
             </div>
         </div>
 
-        <div id="email-view" style="display:none; text-align:center;">
-            <h2>Finish Order</h2>
-            <button class="btn btn-buy" onclick="completeEmailFlow()">Send Order Email</button>
+        <div id="email-view" style="display:none;">
+            <h2>Finalize Order</h2>
+            <p style="color:var(--text-dim); margin-bottom:30px;">Tap below to generate your official order receipt email.</p>
+            <button class="btn btn-buy" onclick="completeEmailFlow()">Generate Order Email</button>
         </div>
 
-        <div id="success-view" style="display:none; text-align:center;">
-            <h1 style="color:var(--primary)">Sent!</h1>
-            <p>Thank you! Pickup at 130 Maple Ave, Rutland.</p>
-            <button class="btn btn-add" onclick="location.reload()">Back to Shop</button>
+        <div id="success-view" style="display:none;">
+            <div style="font-size:5rem;">✅</div>
+            <h1 style="color:var(--primary); margin:0;">Success!</h1>
+            <p>Your order details have been prepared.</p>
+            <button class="btn btn-add" style="margin-top:20px;" onclick="location.reload()">Return to Shop</button>
         </div>
     </div>
 </div>
 
 <script>
     const products = Array.from({length: 10}, (_, i) => ({
-        id: i, name: `Print #${i+1}`, price: (10).toFixed(2), img: `https://placehold.co/400x400/111/00F3FF?text=Print+${i+1}`
+        id: i, 
+        name: `Elite Print Series #${i+1}`, 
+        price: (25.00 + (i*5)).toFixed(2), 
+        img: `https://placehold.co/800x800/111/00F3FF?text=SERIES+${i+1}`
     }));
 
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -205,11 +274,35 @@
         products.forEach(p => {
             const d = document.createElement('div');
             d.className = 'card';
-            d.innerHTML = `<img src="${p.img}" class="card-img"><div class="card-info"><span class="card-price">$${p.price}</span><br>${p.name}</div>
-                <div style="padding:10px;"><button class="btn btn-add" onclick="add(${p.id})">Add</button><button class="btn btn-buy" onclick="buy(${p.id})">Buy Now</button></div>`;
+            d.innerHTML = `
+                <div class="card-img-wrap"><img src="${p.img}" class="card-img"></div>
+                <div class="card-info">
+                    <span class="card-title">${p.name}</span>
+                    <span class="card-price">$${p.price}</span>
+                    <button class="btn btn-add" onclick="add(${p.id})">Add to Cart</button>
+                    <button class="btn btn-buy" onclick="buy(${p.id})">Quick Buy</button>
+                </div>`;
             g.appendChild(d);
         });
         upd();
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function add(id) { 
+        cart.push(products[id]); 
+        upd(); 
+        showToast("Added to selection");
+    }
+
+    function upd() { 
+        document.getElementById('count').innerText = cart.length; 
+        localStorage.setItem('cart', JSON.stringify(cart)); 
     }
 
     function calcTotal() {
@@ -218,39 +311,49 @@
         const shipping = (town === 'Other') ? 5.00 : 0;
         finalT = (base + shipping).toFixed(2);
         document.getElementById('massive-t').innerText = `$${finalT}`;
-        document.getElementById('shipping-note').innerText = shipping > 0 ? "+ $5.00 Shipping Added" : "Free Local Pickup";
+        document.getElementById('shipping-note').innerText = shipping > 0 ? "+ $5.00 Secure Shipping" : "Complimentary Local Pickup";
+    }
+
+    function openCart() { 
+        if(cart.length===0) return showToast("Cart is empty!"); 
+        document.getElementById('m').style.display='flex'; 
+        list(); 
+        showView('cart-view'); 
+    }
+
+    function list() {
+        const l = document.getElementById('items-list'); 
+        l.innerHTML = '';
+        cart.forEach(p => { 
+            l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
+                <span style="font-weight:600">${p.name}</span>
+                <span style="color:var(--primary); font-weight:800">$${p.price}</span>
+            </div>`; 
+        });
+        calcTotal();
     }
 
     function startPay(method) {
         const fn = document.getElementById('fn').value;
         const ln = document.getElementById('ln').value;
-        if(!fn || !ln) return alert("Enter Name");
+        if(!fn || !ln) return showToast("Name required");
 
-        let count = 3;
         const btn = document.getElementById(method === 'Venmo' ? 'pay-venmo' : 'pay-paypal');
-        const timer = setInterval(() => {
-            btn.innerText = `Opening... (${count})`;
-            count--;
-            if(count < 0) {
-                clearInterval(timer);
-                const url = (method === 'Venmo') ? "venmo://paycharge?txn=pay&recipients=michaelroman" : "https://paypal.me/theprintco";
-                const fallback = (method === 'Venmo') ? "https://venmo.com/u/michaelroman" : "https://paypal.me/theprintco";
-                
-                // Single tab logic
-                const isMobile = /iPhone|Android/i.test(navigator.userAgent);
-                if(isMobile && method === 'Venmo') { window.location.href = url; } 
-                else { window.open(fallback, '_blank'); }
-
-                document.getElementById('pay-controls').style.display = 'none';
-                document.getElementById('after-pay').style.display = 'block';
-            }
-        }, 1000);
+        btn.innerText = "Authenticating...";
+        
+        setTimeout(() => {
+            const fallback = (method === 'Venmo') ? "https://venmo.com/u/michaelroman" : "https://paypal.me/theprintco";
+            window.open(fallback, '_blank');
+            document.getElementById('pay-controls').style.display = 'none';
+            document.getElementById('after-pay').style.display = 'block';
+        }, 1500);
     }
 
     function completeEmailFlow() {
-        const body = `Order for ${document.getElementById('fn').value}\nTotal: $${finalT}\nTown: ${document.getElementById('town').value}`;
-        window.open(`mailto:theprintusa@yahoo.com?subject=New Order&body=${encodeURIComponent(body)}`, "_blank");
-        setTimeout(() => { showView('success-view'); cart=[]; upd(); }, 3000);
+        const body = `ORDER SUBMISSION\nCustomer: ${document.getElementById('fn').value} ${document.getElementById('ln').value}\nTotal: $${finalT}\nTown: ${document.getElementById('town').value}\nItems: ${cart.map(p=>p.name).join(', ')}`;
+        window.open(`mailto:theprintusa@yahoo.com?subject=New Print Order&body=${encodeURIComponent(body)}`, "_blank");
+        showView('success-view'); 
+        cart=[]; upd();
     }
 
     function showView(id) { 
@@ -260,24 +363,34 @@
 
     function tab(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        document.getElementById('b-'+id.slice(0,5)).classList.add('active');
     }
 
-    function add(id) { cart.push(products[id]); upd(); }
-    function buy(id) { add(id); openCart(); goCheck(); }
-    function openCart() { if(cart.length===0) return; document.getElementById('m').style.display='flex'; list(); showView('cart-view'); }
-    function upd() { document.getElementById('count').innerText = cart.length; localStorage.setItem('cart', JSON.stringify(cart)); }
-    function list() {
-        const l = document.getElementById('items-list'); l.innerHTML = '';
-        cart.forEach((p, i) => { l.innerHTML += `<p>${p.name} - $${p.price}</p>`; });
-        calcTotal();
-    }
+    function buy(id) { cart.push(products[id]); upd(); openCart(); goCheck(); }
     function goCheck() { showView('check-view'); }
     function closeM() { document.getElementById('m').style.display='none'; }
     function handleSms() { window.location.href = "sms:+17746235268"; }
     function handleEmail() { window.open("mailto:theprintusa@yahoo.com", "_blank"); }
+    function showEmailStep() { showView('email-view'); }
 
-    render();
+    // BG Animation
+    const c = document.getElementById('bgCanvas'), x = c.getContext('2d');
+    let w, h, dots = [];
+    function res() { w = c.width = window.innerWidth; h = c.height = window.innerHeight; }
+    window.onresize = res; res();
+    for(let i=0; i<40; i++) dots.push({x:Math.random()*w, y:Math.random()*h, vx:Math.random()-0.5, vy:Math.random()-0.5});
+    function draw() {
+        x.clearRect(0,0,w,h); x.fillStyle = '#00F3FF';
+        dots.forEach(d => {
+            d.x += d.vx; d.y += d.vy;
+            if(d.x<0 || d.x>w) d.vx *= -1; if(d.y<0 || d.y>h) d.vy *= -1;
+            x.beginPath(); x.arc(d.x, d.y, 1.2, 0, Math.PI*2); x.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw(); render();
 </script>
 </body>
 </html>
