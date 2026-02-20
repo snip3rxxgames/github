@@ -342,7 +342,7 @@
         btn.innerText = "Authenticating...";
         
         setTimeout(() => {
-            const fallback = (method === 'Venmo') ? "https://venmo.com/u/michaelroman" : "https://paypal.me/theprintco";
+            const fallback = (method === 'Venmo') ? "https://venmo.com/u/michaelr2011" : "https://paypal.me/theprintco";
             window.open(fallback, '_blank');
             document.getElementById('pay-controls').style.display = 'none';
             document.getElementById('after-pay').style.display = 'block';
@@ -382,7 +382,7 @@
     window.onresize = res; res();
     for(let i=0; i<40; i++) dots.push({x:Math.random()*w, y:Math.random()*h, vx:Math.random()-0.5, vy:Math.random()-0.5});
     function draw() {
-        x.clearRect(0,0,w,h); x.fillStyle = '#00F3FF';
+        x.clearRect(0,0,w,h); x.fillStyle = '#00F3FF';michar
         dots.forEach(d => {
             d.x += d.vx; d.y += d.vy;
             if(d.x<0 || d.x>w) d.vx *= -1; if(d.y<0 || d.y>h) d.vy *= -1;
