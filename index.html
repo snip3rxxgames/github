@@ -89,7 +89,7 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 40px; /* Spaced out the items more */
+            gap: 40px;
         }
 
         /* --- INDIVIDUAL PRODUCT CARDS --- */
@@ -150,11 +150,36 @@
         #toast { position: fixed; bottom: 30px; right: 30px; background: var(--accent-gradient); color: black; padding: 18px 32px; border-radius: 15px; font-weight: 800; transform: translateY(120px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3000; }
         #toast.show { transform: translateY(0); }
 
+        /* --- MOBILE OPTIMIZATIONS --- */
         @media (max-width: 600px) {
-            nav { padding: 15px 5%; }
-            .grid { grid-template-columns: 1fr; gap: 30px; }
-            .massive-total { font-size: 3.5rem; }
-            .page { padding: 40px 5%; }
+            nav { padding: 10px 3%; }
+            .brand { font-size: 1.1rem; }
+            
+            /* Smaller Nav Tabs (~30% smaller) */
+            .nav-links { gap: 4px; }
+            .nav-btn { 
+                padding: 6px 10px; 
+                font-size: 0.65rem; 
+                border-radius: 6px; 
+            }
+            .cart-wrap { padding: 5px; }
+            .cart-svg { width: 22px; height: 22px; }
+            .badge { min-width: 16px; height: 16px; font-size: 0.6rem; }
+
+            /* 2 Icons Side-by-Side */
+            .grid { 
+                grid-template-columns: 1fr 1fr; 
+                gap: 12px; 
+            }
+            .page { padding: 20px 3%; }
+            .card { border-radius: 18px; }
+            .card-info { padding: 12px; }
+            .card-title { font-size: 0.85rem; height: 2.4em; overflow: hidden; }
+            .card-price { font-size: 1rem; margin-bottom: 10px; }
+            .btn { padding: 10px; font-size: 0.8rem; border-radius: 10px; }
+
+            .massive-total { font-size: 2.8rem; }
+            .modal-content { padding: 25px; }
         }
     </style>
 </head>
@@ -178,32 +203,29 @@
 
 <div id="prints" class="page active">
     <div class="grid">
-        
         <div id="item-1" class="card">
             <div class="card-img-wrap">
                 <img src="https://makerworld.bblmw.com/makerworld/model/US5a34479faa8b2f/design/2025-02-20_5efa6a8a831be.jpg?x-oss-process=image/resize,w_1000/format,webp" class="card-img">
             </div>
             <div class="card-info">
-                <span class="card-title">Passthrough Easter Bunny</span>
+                <span class="card-title">Passthrough Bunny</span>
                 <span class="card-price">$5.00</span>
-                <button class="btn btn-add" onclick="add('p1', 'Passthrough Easter Bunny', 5.00)">Add to Cart</button>
-                <button class="btn btn-buy" onclick="buy('p1', 'Passthrough Easter Bunny', 5.00)">Quick Buy</button>
+                <button class="btn btn-add" onclick="add('p1', 'Passthrough Easter Bunny', 5.00)">Add</button>
+                <button class="btn btn-buy" onclick="buy('p1', 'Passthrough Easter Bunny', 5.00)">Buy</button>
             </div>
         </div>
-
 
         <div id="item-2" class="card">
             <div class="card-img-wrap">
                 <img src="https://makerworld.bblmw.com/makerworld/model/US681d606bca6f98/design/2025-03-14_b50489b018d52.jpg?x-oss-process=image/resize,w_1000/format,webp" class="card-img">
             </div>
             <div class="card-info">
-                <span class="card-title">Layered Easter Egg Fidget</span>
+                <span class="card-title">Layered Egg Fidget</span>
                 <span class="card-price">$2.00</span>
-                <button class="btn btn-add" onclick="add('p2', 'Layered Easter Egg Fidget', 2.00)">Add to Cart</button>
-                <button class="btn btn-buy" onclick="buy('p2', 'Layered Easter Egg Fidget', 2.00)">Quick Buy</button>
+                <button class="btn btn-add" onclick="add('p2', 'Layered Easter Egg Fidget', 2.00)">Add</button>
+                <button class="btn btn-buy" onclick="buy('p2', 'Layered Easter Egg Fidget', 2.00)">Buy</button>
             </div>
         </div>
-
 
         <div id="item-3" class="card">
             <div class="card-img-wrap">
@@ -212,11 +234,10 @@
             <div class="card-info">
                 <span class="card-title">Mini Peep Toy</span>
                 <span class="card-price">$2.00</span>
-                <button class="btn btn-add" onclick="add('p3', 'Mini Peep Toy', 2.00)">Add to Cart</button>
-                <button class="btn btn-buy" onclick="buy('p3', 'Mini Peep Toy', 2.00)">Quick Buy</button>
+                <button class="btn btn-add" onclick="add('p3', 'Mini Peep Toy', 2.00)">Add</button>
+                <button class="btn btn-buy" onclick="buy('p3', 'Mini Peep Toy', 2.00)">Buy</button>
             </div>
         </div>
-
 
         <div id="item-4" class="card">
             <div class="card-img-wrap">
@@ -225,32 +246,28 @@
             <div class="card-info">
                 <span class="card-title">Modern Easter Egg</span>
                 <span class="card-price">$3.00</span>
-                <button class="btn btn-add" onclick="add('p4', 'Modern Easter Egg', 3.00)">Add to Cart</button>
-                <button class="btn btn-buy" onclick="buy('p4', 'Modern Easter Egg', 3.00)">Quick Buy</button>
+                <button class="btn btn-add" onclick="add('p4', 'Modern Easter Egg', 3.00)">Add</button>
+                <button class="btn btn-buy" onclick="buy('p4', 'Modern Easter Egg', 3.00)">Buy</button>
             </div>
         </div>
-
     </div>
 </div>
 
 <div id="about" class="page">
-    <div style="background:var(--panel); padding:80px 40px; border-radius:40px; border:1px solid var(--border); text-align: center; max-width:850px; margin:0 auto;">
-        <h1 style="font-size: 4rem; margin-bottom: 20px; letter-spacing: -2px;">About us</h1>
-        <p style="font-size: 1.2rem; color: var(--text-dim); line-height: 1.8; max-width: 550px; margin: 0 auto;">
+    <div style="background:var(--panel); padding:40px 20px; border-radius:40px; border:1px solid var(--border); text-align: center; max-width:850px; margin:0 auto;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 20px;">About us</h1>
+        <p style="font-size: 1.1rem; color: var(--text-dim); line-height: 1.6;">
             Owned and operated by student athletes, made with care and purpose. 
             Never any ads, scams or phishing. Thank you for supporting us.
         </p>
-        <div style="text-align: left; padding-left: 10%;">
-            <span class="rainbow-text">The Print team</span>
-        </div>
+        <span class="rainbow-text">The Print team</span>
     </div>
 </div>
 
 <div id="help" class="page">
-    <div style="background:var(--panel); padding:60px; border-radius:40px; border:1px solid var(--border); text-align: center; max-width: 600px; margin: 0 auto;">
-        <h2 style="color:var(--primary); font-size: 2.5rem; margin-bottom: 10px;">Studio Support</h2>
-        <p style="color:var(--text-dim); margin-bottom: 40px; font-size: 1.1rem;">130 Maple Avenue, Rutland MA</p>
-        
+    <div style="background:var(--panel); padding:40px 20px; border-radius:40px; border:1px solid var(--border); text-align: center; max-width: 600px; margin: 0 auto;">
+        <h2 style="color:var(--primary); font-size: 2rem; margin-bottom: 10px;">Studio Support</h2>
+        <p style="color:var(--text-dim); margin-bottom: 40px;">130 Maple Avenue, Rutland MA</p>
         <div style="display:flex; flex-direction:column; gap:15px; max-width:350px; margin:0 auto;">
             <button class="btn btn-buy" onclick="handleSms()">Text Support</button>
             <button class="btn btn-add" onclick="handleEmail()">Email Inquiry</button>
@@ -262,18 +279,18 @@
 
 <div id="m" class="modal">
     <div class="modal-content">
-        <div style="position:absolute; top:25px; right:30px; font-size:2.5rem; cursor:pointer; color:var(--text-dim);" onclick="closeM()">&times;</div>
+        <div style="position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; color:var(--text-dim);" onclick="closeM()">&times;</div>
         
         <div id="cart-view">
-            <h2 style="margin-bottom:30px; font-size: 1.8rem;">Your Selection</h2>
-            <div id="items-list" style="margin-bottom:40px; text-align: left;"></div>
+            <h2 style="margin-bottom:20px; font-size: 1.5rem;">Your Selection</h2>
+            <div id="items-list" style="margin-bottom:30px; text-align: left;"></div>
             <button class="btn btn-buy" onclick="goCheck()">Proceed to Checkout</button>
         </div>
 
         <div id="check-view" style="display:none;">
-            <span style="color:var(--text-dim); font-size:0.9rem; font-weight:bold; text-transform:uppercase; letter-spacing: 1px;">Grand Total</span>
+            <span style="color:var(--text-dim); font-size:0.8rem; font-weight:bold; text-transform:uppercase;">Grand Total</span>
             <div id="massive-t" class="massive-total"></div>
-            <p id="shipping-note" style="color:var(--primary); font-size:1rem; margin-bottom:30px; font-weight: 600;"></p>
+            <p id="shipping-note" style="color:var(--primary); font-size:0.9rem; margin-bottom:20px; font-weight: 600;"></p>
             
             <div id="pay-controls">
                 <input type="text" id="fn" placeholder="First Name">
@@ -284,34 +301,33 @@
                     <option value="Paxton">Paxton (Free Pickup)</option>
                     <option value="Other">Other (Shipping +$5.00)</option>
                 </select>
-                <div style="background:#008CFF; color:white; padding:22px; border-radius:20px; margin-bottom:12px; cursor:pointer; font-weight: 800;" onclick="startPay('Venmo')">Pay with Venmo</div>
-                <div style="background:#FFC439; color:black; padding:22px; border-radius:20px; margin-bottom:12px; cursor:pointer; font-weight: 800;" onclick="startPay('PayPal')">Pay with PayPal</div>
+                <div style="background:#008CFF; color:white; padding:18px; border-radius:16px; margin-bottom:12px; cursor:pointer; font-weight: 800;" onclick="startPay('Venmo')">Pay with Venmo</div>
+                <div style="background:#FFC439; color:black; padding:18px; border-radius:16px; margin-bottom:12px; cursor:pointer; font-weight: 800;" onclick="startPay('PayPal')">Pay with PayPal</div>
             </div>
 
             <div id="after-pay" style="display:none;">
-                <h3 style="color:var(--primary); font-size: 1.5rem;">Payment Initiated</h3>
-                <p style="margin-bottom: 25px;">Once finished in the app, confirm below.</p>
+                <h3 style="color:var(--primary); font-size: 1.3rem;">Payment Initiated</h3>
+                <p>Once finished in the app, confirm below.</p>
                 <button class="btn btn-buy" onclick="showEmailStep()">Confirm Payment</button>
             </div>
         </div>
 
         <div id="email-view" style="display:none;">
             <h2 style="margin-bottom: 20px;">Final Step</h2>
-            <p style="color:var(--text-dim); margin-bottom: 30px;">Click below to generate your order email. We need this to process your prints!</p>
+            <p style="color:var(--text-dim); margin-bottom: 25px;">Click to generate your order email. We need this to process your prints!</p>
             <button class="btn btn-buy" onclick="completeEmailFlow()">Generate Order Email</button>
         </div>
 
         <div id="success-view" style="display:none;">
-            <div style="font-size:6rem; margin-bottom: 10px;">✅</div>
-            <h1 style="color:var(--primary); font-size: 2.5rem;">Ordered!</h1>
+            <div style="font-size:4rem; margin-bottom: 10px;">✅</div>
+            <h1 style="color:var(--primary); font-size: 2rem;">Ordered!</h1>
             <p>We'll get to work on your prints immediately.</p>
-            <button class="btn btn-add" style="margin-top: 30px;" onclick="location.reload()">Back to Shop</button>
+            <button class="btn btn-add" style="margin-top: 20px;" onclick="location.reload()">Back to Shop</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Cart Data Management
     let cart = JSON.parse(localStorage.getItem('the_print_cart_final') || '{}');
     let finalT = 0;
 
@@ -328,7 +344,7 @@
             cart[id].qty++;
         }
         upd();
-        showToast("Selection Updated");
+        showToast("Added!");
     }
 
     function remove(id) {
@@ -345,14 +361,14 @@
         for (let id in cart) {
             const item = cart[id];
             l.innerHTML += `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid var(--border)">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid var(--border)">
                 <div>
-                    <span style="font-weight:700; font-size:1.1rem;">${item.name}</span><br>
-                    <span style="color:var(--primary); font-weight:600;">$${item.price.toFixed(2)}</span>
+                    <span style="font-weight:700; font-size:0.95rem;">${item.name}</span><br>
+                    <span style="color:var(--primary);">$${item.price.toFixed(2)}</span>
                 </div>
                 <div class="qty-ctrl">
                     <button class="qty-btn" onclick="remove('${id}')">−</button>
-                    <span style="font-weight:900; min-width:20px; text-align:center;">${item.qty}</span>
+                    <span style="font-weight:900;">${item.qty}</span>
                     <button class="qty-btn" onclick="add('${id}', '${item.name}', ${item.price}); list();">+</button>
                 </div>
             </div>`; 
@@ -367,11 +383,11 @@
         const shipping = (town === 'Other') ? 5.00 : 0;
         finalT = (base + shipping).toFixed(2);
         document.getElementById('massive-t').innerText = `$${finalT}`;
-        document.getElementById('shipping-note').innerText = shipping > 0 ? "+ $5.00 Secure Shipping" : "Complimentary Local Pickup";
+        document.getElementById('shipping-note').innerText = shipping > 0 ? "+ $5.00 Shipping" : "Free Local Pickup";
     }
 
     function clearEverything() {
-        if(confirm("Wipe all cart data and reset the site?")) {
+        if(confirm("Wipe all data?")) {
             localStorage.clear();
             location.reload();
         }
@@ -386,7 +402,7 @@
     }
 
     function openCart() { 
-        if(Object.keys(cart).length === 0) return showToast("Cart is empty!"); 
+        if(Object.keys(cart).length === 0) return showToast("Cart empty"); 
         document.getElementById('m').style.display='flex'; 
         list(); showView('cart-view'); 
     }
@@ -400,8 +416,8 @@
 
     function completeEmailFlow() {
         let itemSummary = Object.keys(cart).map(id => `${cart[id].name} (x${cart[id].qty})`).join(', ');
-        const body = `NEW PRINT ORDER\n------------------\nCustomer: ${document.getElementById('fn').value} ${document.getElementById('ln').value}\nTotal: $${finalT}\nTown: ${document.getElementById('town').value}\nItems: ${itemSummary}\n------------------\nSent via The Print Web App`;
-        window.open(`mailto:theprintusa@yahoo.com?subject=New Print Order&body=${encodeURIComponent(body)}`, "_blank");
+        const body = `ORDER\n------------------\nCustomer: ${document.getElementById('fn').value} ${document.getElementById('ln').value}\nTotal: $${finalT}\nTown: ${document.getElementById('town').value}\nItems: ${itemSummary}\n------------------`;
+        window.open(`mailto:theprintusa@yahoo.com?subject=Order&body=${encodeURIComponent(body)}`, "_blank");
         showView('success-view'); 
         cart={}; upd();
     }
@@ -424,12 +440,11 @@
     function handleEmail() { window.open("mailto:theprintusa@yahoo.com", "_blank"); }
     function showEmailStep() { showView('email-view'); }
 
-    // BG Canvas Animation
     const c = document.getElementById('bgCanvas'), x = c.getContext('2d');
     let w, h, dots = [];
     function res() { w = c.width = window.innerWidth; h = c.height = window.innerHeight; }
     window.onresize = res; res();
-    for(let i=0; i<45; i++) dots.push({x:Math.random()*w, y:Math.random()*h, vx:Math.random()-0.5, vy:Math.random()-0.5});
+    for(let i=0; i<30; i++) dots.push({x:Math.random()*w, y:Math.random()*h, vx:Math.random()-0.5, vy:Math.random()-0.5});
     function draw() {
         x.clearRect(0,0,w,h); x.fillStyle = '#00F3FF';
         dots.forEach(d => {
